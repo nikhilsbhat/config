@@ -13,7 +13,7 @@ If one has to connect cluster using gcloud, will end up runnig multiple gcloud c
 
 Yeah GCP has a option of cloud shell, where one can connect to the cluster hassle-free. Its little hard if we have to connect locally from our machines.
 
-Config solves exactly the same thing, by letting one to switch the cluster in one command. At a stage it's interactive shell helps one in selection of the cluster they want to switch.
+Config solves exactly the same thing, by letting one to switch the cluster in one command. At a stage it's interactive shell helps one in selection of the cluster they want to switch. As a bonus it also helps in activating service account and switching projects.
 
 ## Requires
 
@@ -35,8 +35,45 @@ import (
 )
 ```
 
-### `knife mediawiki stack create`
+### config commands
 
 ```bash
-    knife mediawiki stack create (options)
+    config [command] [flags]
 ```
+Make sure appropriate command is used for the actions, to check the available commands and flags use `config --help`
+
+```bash
+This will help user to deal with gcloud and kube config activity.
+
+
+Usage:
+  config [command] [flags]
+
+Available Commands:
+  help        Help about any command
+  set         command to set the config
+  version     command to fetch the version of config installed
+
+Flags:
+  -c, --cluster-name string   Name of the cluster which needs to be connected to
+  -h, --help                  help for config
+  -j, --json string           path to gcp auth json file
+  -v, --version string        version of the cluster (default "1")
+
+Use "config [command] --help" for more information about a command."
+```
+
+### `config set`
+
+Credentials of GCP can be fed to `config` in two ways.
+Either by passing path of credential file while invoking it or by setting environment variable `GOOGLE_APPLICATION_CREDENTIALS` just like how gcloud expects to be.
+
+To switch to the cluster in the appropriate GCP you wish, `set` command helps in it.
+
+```bash
+    config set -j /path/to/credential.json
+    or
+    config set
+```
+
+**Note** second command in the above snippet works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
