@@ -38,7 +38,7 @@ import (
 ### config commands
 
 ```bash
-    config [command] [flags]
+config [command] [flags]
 ```
 Make sure appropriate command is used for the actions, to check the available commands and flags use `config --help`
 
@@ -71,9 +71,9 @@ Either by passing path of credential file while invoking it or by setting enviro
 To switch to the cluster in the appropriate GCP you wish, `set` command helps in it.
 
 ```bash
-    config set -j /path/to/credential.json
+config set -j /path/to/credential.json
     or
-    config set
+config set
 ```
 
 **Note** second command in the above snippet works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
