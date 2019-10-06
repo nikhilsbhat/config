@@ -3,8 +3,9 @@ package ui
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"io"
+
+	"github.com/fatih/color"
 )
 
 // UiWriter holds the writer for the cli ui.
@@ -25,12 +26,12 @@ type NeuronUi struct {
 
 var (
 	// Red Blue Green Cyan Yellow, Magenta are the variables which holds the respective colors.
-	Red     = Color{color.FgRed}
-	Blue    = Color{color.FgBlue}
-	Green   = Color{color.FgGreen}
-	Cyan    = Color{color.FgCyan}
-	Yellow  = Color{color.FgYellow}
-	Magenta = Color{color.FgMagenta}
+	red     = Color{color.FgRed}
+	blue    = Color{color.FgBlue}
+	green   = Color{color.FgGreen}
+	cyan    = Color{color.FgCyan}
+	yellow  = Color{color.FgYellow}
+	magenta = Color{color.FgMagenta}
 )
 
 func (c *Color) makeitcolorful(msg string) string {
@@ -39,37 +40,42 @@ func (c *Color) makeitcolorful(msg string) string {
 
 // NeuronSaysItsInfo will be defining the color while printing informations.
 func (n NeuronUi) NeuronSaysItsInfo(msg string) {
-	n.neuronPrints(Green.makeitcolorful(msg))
+	n.neuronPrints(green.makeitcolorful(msg))
 }
 
 // NeuronSaysItsError will be defining the color while printing errors.
 func (n NeuronUi) NeuronSaysItsError(msg string) {
-	n.neuronPrints(Red.makeitcolorful("Error: " + msg))
+	n.neuronPrints(red.makeitcolorful("Error: " + msg))
 }
 
 // NeuronSaysItsWarn will be defining the color while printing warnings.
 func (n NeuronUi) NeuronSaysItsWarn(msg string) {
-	n.neuronPrints(Yellow.makeitcolorful(msg))
+	n.neuronPrints(yellow.makeitcolorful(msg))
+}
+
+// NeuronSaysItsDebug will be defining the color while printing warnings.
+func (n NeuronUi) NeuronSaysItsDebug(msg string) {
+	n.neuronPrints(magenta.makeitcolorful(msg))
 }
 
 // Info will be just defining the color for informations.
 func Info(msg string) string {
-	return Green.makeitcolorful(msg)
+	return green.makeitcolorful(msg)
 }
 
 // Error will be just defining the color for errors.
 func Error(msg string) string {
-	return Red.makeitcolorful(msg)
+	return red.makeitcolorful(msg)
 }
 
 // Warn will be just defining the color for warnings.
 func Warn(msg string) string {
-	return Yellow.makeitcolorful(msg)
+	return yellow.makeitcolorful(msg)
 }
 
 // Debug will be just defining the color for debugging.
 func Debug(msg string) string {
-	return Magenta.makeitcolorful(msg)
+	return magenta.makeitcolorful(msg)
 }
 
 func (n NeuronUi) neuronPrints(msg string) {

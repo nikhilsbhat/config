@@ -37,7 +37,7 @@ func getConfigCmds() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	// Creating "version" happens here.
+	// fetching "version" will be happening here.
 	var versionCmd = &cobra.Command{
 		Use:   "version [flags]",
 		Short: "command to fetch the version of config installed",

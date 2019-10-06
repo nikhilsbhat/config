@@ -1,15 +1,16 @@
 package cli
 
 import (
+	"bufio"
 	"config/decode"
 	"config/gcp"
 	"config/version"
 	"fmt"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 
+	"github.com/nikhilsbhat/neuron/cli/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -30,13 +31,10 @@ type gcloudAuth struct {
 	version             string
 }
 
+var path string
+
 func init() {
-
-	path := os.Getenv("CONFIG_DATA")
-	if path == "" {
-		cm.NeuronSaysItsError("Could not find the variable what you are searching for")
-	}
-
+	path = os.Getenv("CONFIG_DATA")
 }
 
 func versionConfig(cmd *cobra.Command, args []string) error {
@@ -45,6 +43,10 @@ func versionConfig(cmd *cobra.Command, args []string) error {
 }
 
 func configSet(auth gcloudAuth) error {
+
+	/*if path == "" {
+		return fmt.Errorf("Could not find the variable what you are searching for")
+	}*/
 
 	if auth.JSONPath != "" {
 		auth.fillGcloudAuth()
@@ -58,17 +60,17 @@ func configSet(auth gcloudAuth) error {
 	}
 
 	if jsErr := auth.setServiceAccount(); jsErr != nil {
-		cm.NeuronSaysItsError(fmt.Sprintf("An Error occured while setting service account %s", getStringOfMessage(jsErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occured while setting service account: %s\n", getStringOfMessage(jsErr)))
 	}
 	if spErr := auth.setProject(); spErr != nil {
-		cm.NeuronSaysItsError(fmt.Sprintf("An Error occured while setting up gcp project %s", getStringOfMessage(spErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occured while setting up gcp project: %s\n", getStringOfMessage(spErr)))
 	}
 	if gcErr := auth.getClusterName(); gcErr != nil {
-		cm.NeuronSaysItsError(fmt.Sprintf("An Error occured while fetching cluster name %s", getStringOfMessage(gcErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occured while fetching cluster name: %s\n", getStringOfMessage(gcErr)))
 	}
-	/*if scErr := auth.setContainerCredentials(); scErr != nil {
-		cm.NeuronSaysItsError(fmt.Sprintf("An Error occured while setting cluster credentials %s", getStringOfMessage(scErr)))
-	}*/
+	if scErr := auth.setContainerCredentials(); scErr != nil {
+		return fmt.Errorf(fmt.Sprintf("An Error occured while setting cluster credentials %s\n", getStringOfMessage(scErr)))
+	}
 	return nil
 }
 
@@ -77,7 +79,7 @@ func (g *gcloudAuth) setServiceAccount() error {
 	if err != nil {
 		return err
 	}
-	cm.NeuronSaysItsInfo("Service account is set successfully")
+	cm.NeuronSaysItsInfo("Service account is set successfully\n")
 	return nil
 }
 
@@ -86,7 +88,7 @@ func (g *gcloudAuth) setProject() error {
 	if err != nil {
 		return err
 	}
-	cm.NeuronSaysItsInfo("Project is set successfully")
+	cm.NeuronSaysItsInfo("Project is set successfully\n")
 	return nil
 }
 
@@ -100,22 +102,28 @@ func (g *gcloudAuth) getClusterName() error {
 		return err
 	}
 
-	ver, err := strconv.Atoi(g.version)
+	clust := make(map[string]string)
+	for _, cluster := range clusters {
+		fmt.Println(fmt.Sprintf("The cluster is: %s in the region: %s\n", ui.Info(cluster.Name), ui.Info(cluster.Location)))
+		if clust[cluster.Name] != cluster.Location {
+			clust[cluster.Name] = cluster.Location
+		}
+	}
+
+	clusterselec, err := getClusterFromIntr()
 	if err != nil {
-		return fmt.Errorf("Unable to parse the version you passed, please pass a valid one")
+		return err
 	}
-	if ver == 1 {
-		for _, cluster := range clusters {
-			fmt.Println(g.ProjectID, cluster.Name)
-			if pro := strings.Contains(g.ProjectID, cluster.Name); pro == true {
-				fmt.Println(fmt.Sprintf("The cluster is: %s in the region: %s, %s", cluster.Name, cluster.Location, cluster.Locations))
-			}
-		}
-	} else {
-		for _, cluster := range clusters {
-			fmt.Println(fmt.Sprintf("The cluster is: %s in the region: %s, %s", cluster.Name, cluster.Location, cluster.Locations))
-		}
+
+	fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusterselec), ui.Info(clust[clusterselec])))
+	if stat := getConfirmOfCLuster(); stat == false {
+		cm.NeuronSaysItsInfo("you said no, I'm backing off")
+		os.Exit(1)
 	}
+
+	g.k8clusterName = clusterselec
+	g.region = clust[clusterselec]
+
 	return nil
 }
 
@@ -161,4 +169,49 @@ func (g *gcloudAuth) fillGcloudAuth() error {
 		return decodneuerr
 	}
 	return nil
+}
+
+func getConfirmOfCLuster() bool {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print(ui.Debug("$config>> "))
+		fmt.Print(ui.Debug("you want to switch to the cluster selected ? [yes/no]: "))
+		cmdString, err := reader.ReadString('\n')
+		if err != nil {
+			return false
+		}
+		cmnds := getArrayOfEntries(cmdString)
+		switch cmnds[0] {
+		case "yes":
+			return true
+		case "no":
+			return false
+		}
+	}
+
+}
+
+func getClusterFromIntr() (string, error) {
+
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print(ui.Debug("$config>> "))
+		fmt.Print(ui.Debug("select cluster from above list [multiple entry not accepted]: "))
+		cmdString, err := reader.ReadString('\n')
+		if err != nil {
+			return "", err
+		}
+		if cmdString != "" {
+			if cmdlen := len(getArrayOfEntries(cmdString)) > 1; cmdlen == true {
+				return "", fmt.Errorf("Cannot select multiple cluster for this operation")
+			}
+			return strings.Join(getArrayOfEntries(cmdString)[:1], ""), nil
+		}
+		return "", fmt.Errorf("Selection of cluster cannot be empty")
+	}
+}
+
+func getArrayOfEntries(commandStr string) []string {
+	commandStr = strings.TrimSuffix(commandStr, "\n")
+	return strings.Fields(commandStr)
 }
