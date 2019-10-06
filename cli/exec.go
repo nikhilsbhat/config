@@ -5,10 +5,12 @@ import (
 	"config/decode"
 	"config/gcp"
 	"config/version"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/nikhilsbhat/neuron/cli/ui"
 	"github.com/spf13/cobra"
@@ -172,10 +174,19 @@ func (g *gcloudAuth) fillGcloudAuth() error {
 }
 
 func getConfirmOfCLuster() bool {
+
 	reader := bufio.NewReader(os.Stdin)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 	for {
 		fmt.Print(ui.Debug("$config>> "))
 		fmt.Print(ui.Debug("you want to switch to the cluster selected ? [yes/no]: "))
+		select {
+		case <-ctx.Done():
+			cm.NeuronSaysItsInfo("")
+			cm.NeuronSaysItsError("Did not hear anything from you. Deadline exceeded")
+			os.Exit(1)
+		}
 		cmdString, err := reader.ReadString('\n')
 		if err != nil {
 			return false
@@ -187,6 +198,7 @@ func getConfirmOfCLuster() bool {
 		case "no":
 			return false
 		}
+		return false
 	}
 
 }
@@ -194,9 +206,17 @@ func getConfirmOfCLuster() bool {
 func getClusterFromIntr() (string, error) {
 
 	reader := bufio.NewReader(os.Stdin)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	for {
 		fmt.Print(ui.Debug("$config>> "))
 		fmt.Print(ui.Debug("select cluster from above list [multiple entry not accepted]: "))
+		select {
+		case <-ctx.Done():
+			cm.NeuronSaysItsInfo("")
+			cm.NeuronSaysItsError("Did not hear anything from you. Deadline exceeded")
+			os.Exit(1)
+		}
 		cmdString, err := reader.ReadString('\n')
 		if err != nil {
 			return "", err
