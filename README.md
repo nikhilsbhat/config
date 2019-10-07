@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/nikhilsbhat/config)](https://goreportcard.com/report/github.com/nikhilsbhat/config)  [![shields](https://img.shields.io/badge/license-apache%20v2-blue)](https://github.com/nikhilsbhat/config/blob/master/LICENSE)
 
 
-A utility which help to switch between multiple [Kubernetes](https://kubernetes.io/) of [GKE](https://cloud.google.com/kubernetes-engine/) clusters.
+A utility which help to switch between multiple [Kubernetes](https://kubernetes.io/) clusters of [GKE](https://cloud.google.com/kubernetes-engine/).
 
 ## Introduction
 
@@ -55,9 +55,10 @@ Available Commands:
   version     command to fetch the version of config installed
 
 Flags:
-  -c, --cluster-name string   Name of the cluster which needs to be connected to
+  -c, --cluster-name string   name of the cluster which needs to be connected to
   -h, --help                  help for config
   -j, --json string           path to gcp auth json file
+  -r, --region strings        region where your cluster resides
   -v, --version string        version of the cluster (default "1")
 
 Use "config [command] --help" for more information about a command."
@@ -74,6 +75,12 @@ To switch to the cluster in the appropriate GCP you wish, `set` command helps in
 config set -j /path/to/credential.json
     or
 config set
+```
+
+You know which cluster to connect and don't want `config` to figure that? below command will help you with that
+
+```bash
+config set -c core-search-dev-cluster -r us-central1 -j /path/to/credential.json
 ```
 
 **Note** second command in the above snippet works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
