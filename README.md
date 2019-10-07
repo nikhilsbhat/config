@@ -67,7 +67,7 @@ Use "config [command] --help" for more information about a command."
 ### `config set`
 
 Credentials of GCP can be fed to `config` in two ways.
-Either by passing path of credential file while invoking it or by setting environment variable `GOOGLE_APPLICATION_CREDENTIALS` just like how gcloud expects to be.
+Either by passing path of credential file while invoking it or by setting environment variable `GOOGLE_APPLICATION_CREDENTIALS` just like how `gcloud` expects to be.
 
 To switch to the cluster in the appropriate GCP you wish, `set` command helps in it.
 
