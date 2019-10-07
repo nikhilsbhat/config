@@ -27,7 +27,7 @@ type gcloudAuth struct {
 	ClientCertURL       string `json:"client_x509_cert_url,omitempty"`
 	JSONPath            string
 	k8clusterName       string
-	region              string
+	regions             []string
 	version             string
 }
 
@@ -96,7 +96,22 @@ func (g *gcloudAuth) getClusterName() error {
 	cluster := new(gcp.GetClusterInput)
 	cluster.ProjectID = g.ProjectID
 	cluster.JSONPath = g.JSONPath
+	cluster.ClusterName = g.k8clusterName
+	cluster.Regions = g.regions
 
+	// Fetches the details of the selected cluster.
+	if len(cluster.ClusterName) != 0 {
+		clusters, err := cluster.GetCluster()
+		if err != nil {
+			return err
+		}
+		fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusters.Name), ui.Info(clusters.Location)))
+		g.k8clusterName = clusters.Name
+		g.regions = []string{clusters.Location}
+		return nil
+	}
+
+	// Fetches the details of all available cluster in the selected region.
 	clusters, err := cluster.GetClusters()
 	if err != nil {
 		return err
@@ -122,13 +137,13 @@ func (g *gcloudAuth) getClusterName() error {
 	}
 
 	g.k8clusterName = clusterselec
-	g.region = clust[clusterselec]
+	g.regions = []string{clust[clusterselec]}
 
 	return nil
 }
 
 func (g *gcloudAuth) setContainerCredentials() error {
-	_, err := exec.Command("gcloud", "container", "clusters", "get-credentials", g.k8clusterName, "--region", g.region).Output()
+	_, err := exec.Command("gcloud", "container", "clusters", "get-credentials", g.k8clusterName, "--region", g.regions[0]).Output()
 	if err != nil {
 		return err
 	}

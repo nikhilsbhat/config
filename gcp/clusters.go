@@ -25,9 +25,10 @@ import (
 
 // GetClusterInput holds the required values to fetch the cluster details
 type GetClusterInput struct {
-	ProjectID string
-	Regions   []string
-	JSONPath  string
+	ClusterName string
+	ProjectID   string
+	Regions     []string
+	JSONPath    string
 }
 
 /*type getClusterResponse struct {
@@ -79,4 +80,40 @@ func (i GetClusterInput) GetClusters() ([]*container.Cluster, error) {
 		}
 	}
 	return clusters, nil
+}
+
+// GetCluster gets the details of specific kube cluster along with its other details
+// This is region specific, mind the region you pass to it.
+func (i GetClusterInput) GetCluster() (*container.Cluster, error) {
+
+	// Initialization of gcp client
+	auth := new(gcloudAuth)
+	auth.JSONPath = i.JSONPath
+	// adding scopes since it is custom client, this holds good for all other services
+	auth.AuthScopes = []string{compute.CloudPlatformScope}
+	client, err := auth.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := context.Background()
+	containerService, err := container.New(client)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if i.ProjectID == "" {
+		return nil, fmt.Errorf("Project ID cannot be empty")
+	}
+
+	if len(i.Regions) == 0 {
+		return nil, fmt.Errorf("Region cannot be empty")
+	}
+
+	parent := fmt.Sprintf("projects/%s/locations/%s/clusters/%s", i.ProjectID, i.Regions[0], i.ClusterName)
+	resp, err := containerService.Projects.Locations.Clusters.Get(parent).Context(ctx).Do()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return resp, nil
 }
