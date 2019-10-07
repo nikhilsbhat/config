@@ -85,6 +85,6 @@ config set -c core-search-dev-cluster -r us-central1 -j /path/to/credential.json
 
 **Note** `config set` without credentials file works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
 
-### Limitations
+## Limitations
 
 Right now this works only with kube clusters hosted in GCP, making it available accross cloud will be more helpful.
