@@ -180,15 +180,21 @@ func getConfirmOfCLuster() bool {
 		if err != nil {
 			return false
 		}
+
+		if len(cmdString) <= 1 {
+			cm.NeuronSaysItsWarn("did not get any valid input")
+			return false
+		}
 		cmnds := getArrayOfEntries(cmdString)
 		switch cmnds[0] {
 		case "yes":
 			return true
 		case "no":
 			return false
+		default:
+			return false
 		}
 	}
-
 }
 
 func getClusterFromIntr() (string, error) {
@@ -201,13 +207,14 @@ func getClusterFromIntr() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		if cmdString != "" {
-			if cmdlen := len(getArrayOfEntries(cmdString)) > 1; cmdlen == true {
-				return "", fmt.Errorf("Cannot select multiple cluster for this operation")
-			}
-			return strings.Join(getArrayOfEntries(cmdString)[:1], ""), nil
+
+		if len(cmdString) <= 1 {
+			return "", fmt.Errorf("Selection of cluster cannot be empty")
 		}
-		return "", fmt.Errorf("Selection of cluster cannot be empty")
+		if cmdlen := len(getArrayOfEntries(cmdString)) > 1; cmdlen == true {
+			return "", fmt.Errorf("Cannot select multiple cluster for this operation")
+		}
+		return strings.Join(getArrayOfEntries(cmdString)[:1], ""), nil
 	}
 }
 
