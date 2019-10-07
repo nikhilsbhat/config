@@ -132,7 +132,7 @@ func (g *gcloudAuth) getClusterName() error {
 
 	fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusterselec), ui.Info(clust[clusterselec])))
 	if stat := getConfirmOfCLuster(); stat == false {
-		cm.NeuronSaysItsInfo("you said no, I'm backing off")
+		cm.NeuronSaysItsInfo("you opted no, I'm backing off")
 		os.Exit(1)
 	}
 
@@ -207,6 +207,7 @@ func getConfirmOfCLuster() bool {
 		case "no":
 			return false
 		default:
+			cm.NeuronSaysItsWarn("can accept eithier yes/no")
 			return false
 		}
 	}
