@@ -87,4 +87,4 @@ config set -c core-search-dev-cluster -r us-central1 -j /path/to/credential.json
 
 ## Limitations
 
-Right now this works only with kube clusters hosted in GCP, making it available accross cloud will be more helpful.
+Right now this works only with kube clusters hosted in [GCP](https://cloud.google.com/), making it available accross other cloud will be more helpful.
