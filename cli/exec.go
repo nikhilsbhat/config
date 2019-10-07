@@ -60,16 +60,16 @@ func configSet(auth gcloudAuth) error {
 	}
 
 	if jsErr := auth.setServiceAccount(); jsErr != nil {
-		return fmt.Errorf(fmt.Sprintf("An Error occured while setting service account: %s\n", getStringOfMessage(jsErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occurred while setting service account: %s\n", getStringOfMessage(jsErr)))
 	}
 	if spErr := auth.setProject(); spErr != nil {
-		return fmt.Errorf(fmt.Sprintf("An Error occured while setting up gcp project: %s\n", getStringOfMessage(spErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occurred while setting up gcp project: %s\n", getStringOfMessage(spErr)))
 	}
 	if gcErr := auth.getClusterName(); gcErr != nil {
-		return fmt.Errorf(fmt.Sprintf("An Error occured while fetching cluster name: %s\n", getStringOfMessage(gcErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occurred while fetching cluster name: %s\n", getStringOfMessage(gcErr)))
 	}
 	if scErr := auth.setContainerCredentials(); scErr != nil {
-		return fmt.Errorf(fmt.Sprintf("An Error occured while setting cluster credentials %s\n", getStringOfMessage(scErr)))
+		return fmt.Errorf(fmt.Sprintf("An Error occurred while setting cluster credentials %s\n", getStringOfMessage(scErr)))
 	}
 	return nil
 }
