@@ -83,4 +83,8 @@ You know which cluster to connect and don't want `config` to figure that out for
 config set -c core-search-dev-cluster -r us-central1 -j /path/to/credential.json
 ```
 
-**Note** second command in the above snippet works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
+**Note** `config set` without credentials file works only if the `GOOGLE_APPLICATION_CREDENTIALS` is set.
+
+### Limitations
+
+Right now this works only with kube clusters hosted in GCP, making it available accross cloud will be more helpful.
