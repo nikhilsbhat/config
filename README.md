@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/nikhilsbhat/config)](https://goreportcard.com/report/github.com/nikhilsbhat/config)  [![shields](https://img.shields.io/badge/license-apache%20v2-blue)](https://github.com/nikhilsbhat/config/blob/master/LICENSE)
 
 
-A utility which help to switch between multiple [Kubernetes](https://kubernetes.io/) clusters of [GKE](https://cloud.google.com/kubernetes-engine/).
+A utility which helps to switch between multiple [Kubernetes](https://kubernetes.io/) clusters of [GKE](https://cloud.google.com/kubernetes-engine/).
 
 ## Introduction
 
@@ -77,7 +77,7 @@ config set -j /path/to/credential.json
 config set
 ```
 
-You know which cluster to connect and don't want `config` to figure that? below command will help you with that
+You know which cluster to connect and don't want `config` to figure that out for you? then below command will help you with that
 
 ```bash
 config set -c core-search-dev-cluster -r us-central1 -j /path/to/credential.json

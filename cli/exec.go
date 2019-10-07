@@ -33,6 +33,7 @@ type gcloudAuth struct {
 
 var path string
 
+// This is temporary function created for testing and will be removed soon if its purpose fails.
 func init() {
 	path = os.Getenv("CONFIG_DATA")
 }
