@@ -29,13 +29,16 @@ type gcloudAuth struct {
 	k8clusterName       string
 	regions             []string
 	version             string
+	shell               *bufio.Reader
 }
 
-var path string
+var (
+	jsonAuth gcloudAuth
+)
 
 // This is temporary function created for testing and will be removed soon if its purpose fails.
 func init() {
-	path = os.Getenv("CONFIG_DATA")
+	jsonAuth.shell = bufio.NewReader(os.Stdin)
 }
 
 func versionConfig(cmd *cobra.Command, args []string) error {
@@ -188,11 +191,11 @@ func (g *gcloudAuth) fillGcloudAuth() error {
 }
 
 func getConfirmOfCLuster() bool {
-	reader := bufio.NewReader(os.Stdin)
+
 	for {
 		fmt.Print(ui.Debug("$config>> "))
 		fmt.Print(ui.Debug("you want to switch to the cluster selected ? [yes/no]: "))
-		cmdString, err := reader.ReadString('\n')
+		cmdString, err := (jsonAuth.shell).ReadString('\n')
 		if err != nil {
 			return false
 		}
@@ -208,7 +211,7 @@ func getConfirmOfCLuster() bool {
 		case "no":
 			return false
 		default:
-			cm.NeuronSaysItsWarn("can accept eithier yes/no")
+			cm.NeuronSaysItsWarn("opt eithier yes/no not other than that")
 			return false
 		}
 	}
@@ -216,11 +219,10 @@ func getConfirmOfCLuster() bool {
 
 func getClusterFromIntr() (string, error) {
 
-	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print(ui.Debug("$config>> "))
 		fmt.Print(ui.Debug("select cluster from above list [multiple entry not accepted]: "))
-		cmdString, err := reader.ReadString('\n')
+		cmdString, err := (jsonAuth.shell).ReadString('\n')
 		if err != nil {
 			return "", err
 		}
