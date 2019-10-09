@@ -25,7 +25,7 @@ type gcloudAuth struct {
 	TokenURI            string `json:"token_uri,omitempty"`
 	AuthProviderCertURL string `json:"auth_provider_x509_cert_url,omitempty"`
 	ClientCertURL       string `json:"client_x509_cert_url,omitempty"`
-	JSONPath            string
+	jsonPath            string
 	k8clusterName       string
 	regions             []string
 	version             string
@@ -52,14 +52,14 @@ func configSet(auth gcloudAuth) error {
 		return fmt.Errorf("Could not find the variable what you are searching for")
 	}*/
 
-	if auth.JSONPath != "" {
+	if auth.jsonPath != "" {
 		auth.fillGcloudAuth()
 	} else {
 		path, err := getJSONPathFromEnv()
 		if err != nil {
 			return err
 		}
-		auth.JSONPath = path
+		auth.jsonPath = path
 		auth.fillGcloudAuth()
 	}
 
@@ -79,7 +79,7 @@ func configSet(auth gcloudAuth) error {
 }
 
 func (g *gcloudAuth) setServiceAccount() error {
-	_, err := exec.Command("gcloud", "auth", "activate-service-account", g.ClientEmail, fmt.Sprintf("--key-file=%s", g.JSONPath)).Output()
+	_, err := exec.Command("gcloud", "auth", "activate-service-account", g.ClientEmail, fmt.Sprintf("--key-file=%s", g.jsonPath)).Output()
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (g *gcloudAuth) setProject() error {
 func (g *gcloudAuth) getClusterName() error {
 	cluster := new(gcp.GetClusterInput)
 	cluster.ProjectID = g.ProjectID
-	cluster.JSONPath = g.JSONPath
+	cluster.JSONPath = g.jsonPath
 	cluster.ClusterName = g.k8clusterName
 	cluster.Regions = g.regions
 
@@ -178,7 +178,7 @@ func getJSONPathFromEnv() (string, error) {
 }
 
 func (g *gcloudAuth) fillGcloudAuth() error {
-	jsonCont, err := decode.ReadFile(g.JSONPath)
+	jsonCont, err := decode.ReadFile(g.jsonPath)
 	if err != nil {
 		return err
 	}
