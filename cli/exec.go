@@ -25,7 +25,7 @@ type gcloudAuth struct {
 	TokenURI            string `json:"token_uri,omitempty"`
 	AuthProviderCertURL string `json:"auth_provider_x509_cert_url,omitempty"`
 	ClientCertURL       string `json:"client_x509_cert_url,omitempty"`
-	JSONPath            string
+	jsonPath            string
 	k8clusterName       string
 	regions             []string
 	version             string
@@ -52,14 +52,14 @@ func configSet(auth gcloudAuth) error {
 		return fmt.Errorf("Could not find the variable what you are searching for")
 	}*/
 
-	if auth.JSONPath != "" {
+	if auth.jsonPath != "" {
 		auth.fillGcloudAuth()
 	} else {
 		path, err := getJSONPathFromEnv()
 		if err != nil {
 			return err
 		}
-		auth.JSONPath = path
+		auth.jsonPath = path
 		auth.fillGcloudAuth()
 	}
 
@@ -79,7 +79,7 @@ func configSet(auth gcloudAuth) error {
 }
 
 func (g *gcloudAuth) setServiceAccount() error {
-	_, err := exec.Command("gcloud", "auth", "activate-service-account", g.ClientEmail, fmt.Sprintf("--key-file=%s", g.JSONPath)).Output()
+	_, err := exec.Command("gcloud", "auth", "activate-service-account", g.ClientEmail, fmt.Sprintf("--key-file=%s", g.jsonPath)).Output()
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (g *gcloudAuth) setProject() error {
 func (g *gcloudAuth) getClusterName() error {
 	cluster := new(gcp.GetClusterInput)
 	cluster.ProjectID = g.ProjectID
-	cluster.JSONPath = g.JSONPath
+	cluster.JSONPath = g.jsonPath
 	cluster.ClusterName = g.k8clusterName
 	cluster.Regions = g.regions
 
@@ -119,6 +119,12 @@ func (g *gcloudAuth) getClusterName() error {
 	clusters, err := cluster.GetClusters()
 	if err != nil {
 		return err
+	}
+
+	if len(clusters) == 1 {
+		g.k8clusterName = clusters[0].Name
+		g.regions = []string{clusters[0].Location}
+		return nil
 	}
 
 	clust := make(map[string]string)
@@ -178,7 +184,7 @@ func getJSONPathFromEnv() (string, error) {
 }
 
 func (g *gcloudAuth) fillGcloudAuth() error {
-	jsonCont, err := decode.ReadFile(g.JSONPath)
+	jsonCont, err := decode.ReadFile(g.jsonPath)
 	if err != nil {
 		return err
 	}
@@ -204,14 +210,14 @@ func getConfirmOfCLuster() bool {
 			cm.NeuronSaysItsWarn("did not get any valid input")
 			return false
 		}
+		// Have to implement the wait function until valid input is passed
 		cmnds := getArrayOfEntries(cmdString)
-		switch cmnds[0] {
-		case "yes":
+		if (cmnds[0] == "yes") || (cmnds[0] == "y") {
 			return true
-		case "no":
+		} else if (cmnds[0] == "no") || (cmnds[0] == "n") {
 			return false
-		default:
-			cm.NeuronSaysItsWarn("opt eithier yes/no not other than that")
+		} else {
+			cm.NeuronSaysItsWarn("opt eithier yes/no")
 			return false
 		}
 	}
