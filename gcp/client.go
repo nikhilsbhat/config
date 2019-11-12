@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"config/decode"
+	"github.com/nikhilsbhat/config/decode"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"

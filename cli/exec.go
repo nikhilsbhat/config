@@ -2,9 +2,9 @@ package cli
 
 import (
 	"bufio"
-	"config/decode"
-	"config/gcp"
-	"config/version"
+	"github.com/nikhilsbhat/config/decode"
+	"github.com/nikhilsbhat/config/gcp"
+	"github.com/nikhilsbhat/config/version"
 	"fmt"
 	"os"
 	"os/exec"
@@ -121,6 +121,7 @@ func (g *gcloudAuth) getClusterName() error {
 		return err
 	}
 
+	// Avoiding shell if only one cluster exists.
 	if len(clusters) == 1 {
 		g.k8clusterName = clusters[0].Name
 		g.regions = []string{clusters[0].Location}
@@ -157,7 +158,7 @@ func (g *gcloudAuth) setContainerCredentials() error {
 	if err != nil {
 		return err
 	}
-	cm.NeuronSaysItsInfo("K8 cluster credentials is set successfully")
+	cm.NeuronSaysItsInfo("K8 cluster credentials is set successfully\n")
 	return nil
 }
 

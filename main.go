@@ -1,7 +1,7 @@
 package main
 
 import (
-	cli "config/cli"
+	cli "github.com/nikhilsbhat/config/cli"
 )
 
 //This function is responsible for starting the application.
