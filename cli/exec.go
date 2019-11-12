@@ -2,10 +2,10 @@ package cli
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/nikhilsbhat/config/decode"
 	"github.com/nikhilsbhat/config/gcp"
 	"github.com/nikhilsbhat/config/version"
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
