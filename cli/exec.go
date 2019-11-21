@@ -3,12 +3,13 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	"github.com/nikhilsbhat/config/decode"
-	"github.com/nikhilsbhat/config/gcp"
-	"github.com/nikhilsbhat/config/version"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/nikhilsbhat/config/decode"
+	"github.com/nikhilsbhat/config/gcp"
+	"github.com/nikhilsbhat/config/version"
 
 	"github.com/nikhilsbhat/neuron/cli/ui"
 	"github.com/spf13/cobra"
@@ -136,9 +137,13 @@ func (g *gcloudAuth) getClusterName() error {
 		}
 	}
 
-	clusterselec, err := getClusterFromIntr()
-	if err != nil {
-		return err
+	var clusterselec string
+	for ok := true; ok; ok = (len(clust[clusterselec]) == 0) {
+		clusterselec, err = getClusterFromIntr()
+		if err != nil {
+			return err
+		}
+		cm.NeuronSaysItsWarn("The cluster selected doesnot exists, please make a valid selection\n")
 	}
 
 	fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusterselec), ui.Info(clust[clusterselec])))
