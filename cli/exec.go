@@ -143,7 +143,9 @@ func (g *gcloudAuth) getClusterName() error {
 		if err != nil {
 			return err
 		}
-		cm.NeuronSaysItsWarn("The cluster selected doesnot exists, please make a valid selection\n")
+		if len(clust[clusterselec]) == 0 {
+			cm.NeuronSaysItsWarn("The cluster selected doesnot exists, please make a valid selection\n")
+		}
 	}
 
 	fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusterselec), ui.Info(clust[clusterselec])))
