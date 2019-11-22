@@ -123,6 +123,12 @@ func (g *gcloudAuth) getClusterName() error {
 	}
 
 	// Avoiding shell if only one cluster exists.
+	if len(clusters) == 0 {
+		cm.NeuronSaysItsWarn("It looks like there are no cluster running in the project you've selected\n")
+		os.Exit(1)
+	}
+
+	// Avoiding shell if only one cluster exists.
 	if len(clusters) == 1 {
 		g.k8clusterName = clusters[0].Name
 		g.regions = []string{clusters[0].Location}
