@@ -106,13 +106,22 @@ func (g *gcloudAuth) getClusterName() error {
 
 	// Fetches the details of the selected cluster.
 	if len(cluster.ClusterName) != 0 {
-		clusters, err := cluster.GetCluster()
+		clusters, err := cluster.GetClusters()
 		if err != nil {
 			return err
 		}
-		fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(clusters.Name), ui.Info(clusters.Location)))
-		g.k8clusterName = clusters.Name
-		g.regions = []string{clusters.Location}
+
+		if len(g.regions) == 0 {
+			for _, cluster := range clusters {
+				if cluster.Name == g.k8clusterName {
+					g.k8clusterName = cluster.Name
+					g.regions = []string{cluster.Location}
+					fmt.Println(fmt.Sprintf("Selected cluster is :%s in the region :%s\n", ui.Info(cluster.Name), ui.Info(cluster.Location)))
+					return nil
+				}
+			}
+		}
+
 		return nil
 	}
 
