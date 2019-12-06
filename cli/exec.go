@@ -122,7 +122,8 @@ func (g *gcloudAuth) getClusterName() error {
 			}
 		}
 
-		return nil
+		cm.NeuronSaysItsWarn("It looks like there are no cluster running in the project you've selected\n")
+		os.Exit(1)
 	}
 
 	// Fetches the details of all available cluster in the selected region.
