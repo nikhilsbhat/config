@@ -1,4 +1,4 @@
-// Package cli will initialize cli for neuron.
+// Package cli will initialize cli for config.
 package cli
 
 import (
