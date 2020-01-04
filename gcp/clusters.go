@@ -1,18 +1,5 @@
+// Package gcp helps in Performing the certain operation on GKE of google cloud
 package gcp
-
-// BEFORE RUNNING:
-// ---------------
-// 1. If not already done, enable the Kubernetes Engine API
-//    and check the quota for your project at
-//    https://console.developers.google.com/apis/api/container
-// 2. This sample uses Application Default Credentials for authentication.
-//    If not already done, install the gcloud CLI from
-//    https://cloud.google.com/sdk/ and run
-//    `gcloud beta auth application-default login`.
-//    For more information, see
-//    https://developers.google.com/identity/protocols/application-default-credentials
-// 3. Install and update the Go dependencies by running `go get -u` in the
-//    project directory.
 
 import (
 	"fmt"
@@ -30,11 +17,6 @@ type GetClusterInput struct {
 	Regions     []string
 	JSONPath    string
 }
-
-/*type getClusterResponse struct {
-	ClusterName string
-	Region      string
-}*/
 
 // GetClusters gets the list of kube clusters along with its other details
 // This is region specific, mind the region you pass to it.

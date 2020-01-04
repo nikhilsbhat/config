@@ -1,3 +1,4 @@
+// Package main initializes the cli of config
 package main
 
 import (

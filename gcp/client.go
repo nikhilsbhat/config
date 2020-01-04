@@ -1,3 +1,4 @@
+// Package gcp helps in initializing client for GCP.
 package gcp
 
 import (

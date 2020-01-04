@@ -1,7 +1,7 @@
 # config
 
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/nikhilsbhat/config)](https://goreportcard.com/report/github.com/nikhilsbhat/config)  [![shields](https://img.shields.io/badge/license-apache%20v2-blue)](https://github.com/nikhilsbhat/config/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nikhilsbhat/config)](https://goreportcard.com/report/github.com/nikhilsbhat/config)  [![shields](https://img.shields.io/badge/license-apache%20v2-blue)](https://github.com/nikhilsbhat/config/blob/master/LICENSE) [![shields](https://godoc.org/github.com/nikhilsbhat/config?status.svg)](https://godoc.org/github.com/nikhilsbhat/config)
 
 
 A utility which helps to switch between multiple [Kubernetes](https://kubernetes.io/) clusters of [GKE](https://cloud.google.com/kubernetes-engine/).
